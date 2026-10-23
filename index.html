@@ -8,7 +8,31 @@
     
     <!-- Подключаем современные шрифты без засечек -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Подключение Tailwind и Lucide для калькулятора -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            corePlugins: { preflight: false }, /* Отключаем сброс стилей, чтобы не сломать дизайн сайта */
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            deepBlue: '#012044',
+                            purpleBlue: '#384CA1',
+                            lilac: '#AEBCFB',
+                            crimson: '#D13262',
+                            sand: '#FFF5DF',
+                            white: '#FBFBFB',
+                            graphite: '#252525'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     
     <style>
         /* Цветовая палитра из брендбука (светлая тема) */
@@ -205,8 +229,6 @@
         .nav-links {
             display: flex;
             gap: 30px;
-            margin-left: auto; /* Отодвигаем меню от логотипа */
-            margin-right: 40px;
         }
 
         .nav-links a {
@@ -860,6 +882,27 @@
             border: none;
         }
 
+        /* --- Стили для Калькулятора --- */
+        .animate-fade-in-up { animation: fadeInUp 0.5s ease-out forwards; }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-zoom-in { animation: zoomIn 0.5s ease-out forwards; }
+        @keyframes zoomIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        input[type=range] { -webkit-appearance: none; background: transparent; }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none; height: 20px; width: 20px; border-radius: 50%;
+            background: #384CA1; cursor: pointer; margin-top: -6px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%; height: 8px; cursor: pointer; background: #AEBCFB; border-radius: 4px;
+        }
+        input[type=range]:focus { outline: none; }
+        
         /* Адаптивность (Mobile First) */
         @media (max-width: 992px) {
             .expert-section {
@@ -877,10 +920,6 @@
             }
             .expert-video {
                 max-width: 400px;
-            }
-            .nav-links {
-                margin-left: 0;
-                margin-right: 20px;
             }
             .hero-container {
                 grid-template-columns: 1fr;
@@ -955,7 +994,7 @@
             </nav>
             <div class="header-contacts">
                 <a href="tel:+79827752017" class="phone-link">+7 982 775 2017</a>
-                <a href="#header" class="btn btn-accent">Заказать аудит</a>
+                <a href="https://t.me/nalogimakovskaya?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%9E%D0%B1%D1%80%D0%B0%D1%89%D0%B0%D1%8E%D1%81%D1%8C%20%D0%BA%20%D0%B2%D0%B0%D0%BC%20%D1%81%20%D0%B2%D0%B0%D1%88%D0%B5%D0%B3%D0%BE%20%D1%81%D0%B0%D0%B9%D1%82%D0%B0." target="_blank" class="btn btn-accent">Оставить заявку</a>
             </div>
         </div>
     </header>
@@ -967,7 +1006,7 @@
                     <h1>Найдем скрытые налоговые риски<br><span class="text-accent">до прихода инспектора</span></h1>
                     <p>Диагностика учета и налоговых рисков для ИП и ООО</p>
                     
-                    <form class="input-group" onsubmit="handleFormSubmit(event, 'hero-form')">
+                    <form class="input-group" onsubmit="event.preventDefault(); window.open('https://t.me/nalogimakovskaya?text=' + encodeURIComponent('Здравствуйте! Обращаюсь к вам с вашего сайта. Хочу получить первичный разбор моей ситуации.'), '_blank');">
                         <input type="tel" id="hero-phone" placeholder="+7 (___) ___-__-__" required>
                         <button type="submit" class="btn btn-accent">Получить первичный разбор</button>
                     </form>
@@ -999,6 +1038,55 @@
                     <div class="card">
                         <h3 class="text-primary">Работа с подрядчиками</h3>
                         <p>Вы регулярно оплачиваете услуги ИП или самозанятых. Налоговая активно переквалифицирует такие договоры в трудовые, доначисляя НДФЛ и страховые взносы за прошлые периоды.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ИНТЕРАКТИВНЫЙ КАЛЬКУЛЯТОР -->
+        <section id="calculator-section" style="padding: 100px 20px;">
+            <div class="container" style="display: flex; flex-direction: column; align-items: center;">
+                <h2 style="margin-bottom: 40px; text-align: center;">Оцените скрытые риски и выгоду аутсорсинга</h2>
+                
+                <div class="max-w-xl w-full rounded-2xl shadow-xl relative border border-gray-100 bg-brand-white" style="background: #FBFBFB; font-family: 'Inter', sans-serif;">
+                    
+                    <!-- Прогресс-бар -->
+                    <div id="progress-container" class="h-1.5 w-full bg-brand-lilac" style="border-radius: 15px 15px 0 0; overflow: hidden;">
+                        <div id="progress-bar" class="h-full bg-brand-purpleBlue transition-all duration-500 ease-out" style="width: 20%;"></div>
+                    </div>
+
+                    <div class="p-6 sm:p-8 flex flex-col">
+                        
+                        <!-- Шапка -->
+                        <div class="flex items-center gap-4 mb-6 pb-6 border-b border-gray-100">
+                            <div class="w-12 h-12 rounded-full flex items-center justify-center text-brand-white font-bold text-2xl flex-shrink-0 bg-brand-purpleBlue">
+                                <span class="tracking-tighter font-sans">Ф</span>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-xl md:text-2xl leading-none tracking-[-0.03em] text-brand-deepBlue" style="margin-bottom: 0;">Финалогика</h3>
+                                <p class="text-[10px] md:text-xs uppercase tracking-wider mt-1 font-medium text-brand-purpleBlue m-0">
+                                    аутсорсинговое агентство Маковской
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <!-- Контейнер для шагов -->
+                        <div id="step-content" class="flex-grow min-h-[420px]">
+                            <!-- Контент генерируется через JS -->
+                        </div>
+
+                        <!-- Навигация -->
+                        <div id="navigation" class="flex gap-3 mt-8 pt-6 border-t border-gray-100">
+                            <button id="btn-back" onclick="handleBack()" class="p-4 border border-brand-lilac rounded-xl transition-colors flex-shrink-0 flex items-center justify-center hover:bg-gray-50 text-brand-deepBlue hidden" style="border-width: 1px; outline: none; background: transparent; cursor: pointer;">
+                                <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                            </button>
+                            
+                            <button id="btn-next" onclick="handleNext()" class="flex-1 text-brand-white font-medium py-4 px-6 rounded-xl transition-colors shadow flex items-center justify-center gap-2 bg-brand-deepBlue border-0" style="cursor: pointer; outline: none;">
+                                <span id="btn-next-text">Далее</span>
+                                <i id="btn-next-icon" data-lucide="arrow-right" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        
                     </div>
                 </div>
             </div>
@@ -1124,17 +1212,21 @@
             const btn = event.target.querySelector('button');
             const originalText = btn.innerHTML;
             
-            btn.innerHTML = '<div class="loader-icon" style="display:inline-block; margin-right:8px;"></div> Успешно!';
+            btn.innerHTML = '<div class="loader-icon" style="display:inline-block; margin-right:8px;"></div> Переход в Telegram...';
             btn.style.backgroundColor = 'var(--color-primary)';
             btn.style.borderColor = 'var(--color-primary)';
             btn.style.color = '#fff';
+            
+            // Формируем текст для блока "Налоговая реформа" и отправляем в ТГ
+            const message = 'Здравствуйте! Обращаюсь к вам с вашего сайта. Нужна консультация по адаптации бизнеса к налоговой реформе.';
+            window.open('https://t.me/nalogimakovskaya?text=' + encodeURIComponent(message), '_blank');
             
             setTimeout(() => {
                 btn.innerHTML = originalText;
                 btn.style.backgroundColor = '';
                 btn.style.borderColor = '';
                 event.target.reset();
-            }, 3000);
+            }, 2000);
         }
 
         // Уменьшение хедера при скролле
@@ -1178,6 +1270,451 @@
                 iframe.src = currentSrc;
             }
         }
+
+        // --- ЛОГИКА КАЛЬКУЛЯТОРА ---
+        const state = {
+            step: 1,
+            isSubmitted: false,
+            formData: {
+                niche: 'Маркетплейсы/ПВЗ',
+                taxSystem: 'УСН 6% (Доходы)',
+                revenue: 2000000,
+                employees: 5,
+                cashRegisters: 1,
+                bankAccounts: 1,
+                incomingDocs: 50,
+                outgoingDocs: 50,
+                inhouseSalary: 70000,
+                phone: '',
+                name: ''
+            }
+        };
+
+        const nicheRisks = {
+            'Маркетплейсы/ПВЗ': {
+                title: 'Штрафы за занижение выручки',
+                desc: 'Часто считают налоги только с доходов, поступивших на расчетный счет, а не с факта продаж (учитывая комиссии площадок). Налоговая видит расхождение и доначисляет налог со штрафами.'
+            },
+            'Медицинская деятельность': {
+                title: 'Потеря законных налоговых льгот',
+                desc: 'Бухгалтеры зачастую неверно выбирают систему налогообложения или не используют нулевую ставку по налогу на прибыль. Вы можете годами терять миллионы рублей законной экономии.'
+            },
+            'Общепит': {
+                title: 'Упущенное освобождение от НДС',
+                desc: 'Часто не знают, что делать, чтобы пользоваться освобождением по НДС (для кафе и ресторанов), или допускают критические ошибки в кассовой дисциплине.'
+            },
+            'Образовательная деятельность': {
+                title: 'Слет с льготных ставок',
+                desc: 'Часто игнорируется возможность применения льготной ставки по налогу на прибыль (0%) из-за страха бухгалтера перед ведением сложного раздельного учета доходов.'
+            },
+            'Строительство/ремонты': {
+                title: 'Кассовые разрывы и проблемы с НДС',
+                desc: 'Несвоевременное закрытие документов (КС-2, КС-3) и "висящие" авансы ведут к огромным переплатам по НДС в одном квартале и убыткам в другом.'
+            },
+            'Транспортные услуги': {
+                title: 'Снятие расходов на ГСМ',
+                desc: 'Налоговая регулярно снимает многомиллионные расходы на ГСМ из-за некорректно оформленных путевых листов, резко увеличивая вашу налогооблагаемую базу.'
+            },
+            'Оптовая торговля': {
+                title: 'Разрывы по НДС и блокировки',
+                desc: 'Один недобросовестный поставщик в цепочке создает "разрыв" по НДС. ФНС автоматически отказывает вам в вычете, требует доплатить налог и блокирует счета.'
+            },
+            'Розничная торговля': {
+                title: 'Штрафы за кассы и маркировку',
+                desc: 'Несостыковки в товарных остатках, игнорирование правил работы с маркированным товаром (Честный ЗНАК) и ошибки пробития чеков ведут к постоянным проверкам.'
+            },
+            'Производство': {
+                title: 'Искажение себестоимости',
+                desc: 'Некорректное распределение прямых и косвенных расходов искажает реальную себестоимость продукта, что приводит к значительной переплате налога на прибыль.'
+            },
+            'IT / Digital': {
+                title: 'Потеря IT-льгот',
+                desc: 'Бухгалтеры не отслеживают обязательную долю профильной выручки, из-за чего компания может внезапно лишиться льгот по страховым взносам (7.6%) и налогу на прибыль.'
+            },
+            'Услуги (прочее)': {
+                title: 'Риск признания дробления бизнеса',
+                desc: 'Если у вас несколько ИП или ООО для оптимизации, высок риск того, что ФНС квалифицирует это как незаконное дробление и доначислит налоги по общей системе.'
+            }
+        };
+
+        const formatCurrency = (value) => {
+            return new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 }).format(value);
+        };
+
+        function calculateFinancials() {
+            const taxesAndContributions = state.formData.inhouseSalary * 0.43;
+            const workplaceCost = 5000 + (state.formData.employees * 500);
+            const totalInhouseCost = state.formData.inhouseSalary + taxesAndContributions + workplaceCost;
+            
+            const baseOutsourceCost = state.formData.taxSystem.includes('ОСНО') ? 25000 : 12000;
+            const docsProcessingCost = (state.formData.incomingDocs + state.formData.outgoingDocs) * 60;
+            const employeeProcessingCost = state.formData.employees * 1100;
+            const registersCost = state.formData.cashRegisters * 1500;
+            const accountsCost = state.formData.bankAccounts * 1000;
+            
+            const outsourceCost = baseOutsourceCost + docsProcessingCost + employeeProcessingCost + registersCost + accountsCost;
+            const monthlySavings = totalInhouseCost - outsourceCost;
+            const yearlySavings = monthlySavings * 12;
+
+            return {
+                taxesAndContributions, workplaceCost, totalInhouseCost, outsourceCost, yearlySavings
+            };
+        }
+
+        function updateSelect(key, value) {
+            state.formData[key] = value;
+        }
+
+        function updateRange(key, value) {
+            state.formData[key] = Number(value);
+            const valEl = document.getElementById(`val-${key}`);
+            if(valEl) {
+                if(key === 'incomingDocs' || key === 'outgoingDocs') {
+                    valEl.innerText = `${value} шт/мес`;
+                } else if(key === 'inhouseSalary') {
+                    valEl.innerText = formatCurrency(value);
+                    updateFinancialsUI();
+                } else {
+                    valEl.innerText = value;
+                }
+            }
+        }
+
+        function updateInput(key, value) {
+            state.formData[key] = value;
+        }
+
+        function updateFinancialsUI() {
+            const fin = calculateFinancials();
+            document.getElementById('ui-inhouse-salary').innerText = formatCurrency(state.formData.inhouseSalary);
+            document.getElementById('ui-inhouse-taxes').innerText = formatCurrency(fin.taxesAndContributions);
+            document.getElementById('ui-inhouse-workplace').innerText = formatCurrency(fin.workplaceCost);
+            document.getElementById('ui-inhouse-total').innerText = formatCurrency(fin.totalInhouseCost);
+            
+            document.getElementById('ui-outsource-base').innerText = formatCurrency(fin.outsourceCost);
+            document.getElementById('ui-outsource-total').innerText = formatCurrency(fin.outsourceCost);
+            
+            const savingsEl = document.getElementById('ui-savings-container');
+            if (fin.yearlySavings > 0) {
+                savingsEl.innerHTML = `
+                    <p class="font-medium tracking-[-0.02em] text-brand-deepBlue m-0">
+                        Спокойствие собственника и экономия за год: 
+                        <span class="font-bold text-xl block sm:inline mt-1 sm:mt-0 sm:ml-2 text-brand-crimson">
+                            ${formatCurrency(fin.yearlySavings)}
+                        </span>
+                    </p>
+                `;
+                savingsEl.style.display = 'block';
+            } else {
+                savingsEl.style.display = 'none';
+            }
+        }
+
+        function getStep1HTML() {
+            return `
+            <div class="space-y-6 animate-fade-in-up text-left">
+                <div class="space-y-2">
+                    <h2 class="text-2xl font-bold tracking-[-0.03em] text-brand-deepBlue m-0" style="text-align: left;">Параметры вашего бизнеса</h2>
+                    <p class="text-sm tracking-[-0.02em] text-brand-graphite m-0">Укажите точные данные для расчета скрытых потерь на учете</p>
+                </div>
+                <div class="space-y-5">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-1 text-brand-graphite">Отрасль</label>
+                            <select onchange="updateSelect('niche', this.value)" class="w-full p-3 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-brand-purpleBlue transition-colors">
+                                ${Object.keys(nicheRisks).map(n => `<option ${state.formData.niche === n ? 'selected' : ''}>${n}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1 text-brand-graphite">Система НО</label>
+                            <select onchange="updateSelect('taxSystem', this.value)" class="w-full p-3 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-brand-purpleBlue">
+                                <option ${state.formData.taxSystem === 'УСН 6% (Доходы)' ? 'selected' : ''}>УСН 6% (Доходы)</option>
+                                <option ${state.formData.taxSystem === 'УСН 15% (Доходы - Расходы)' ? 'selected' : ''}>УСН 15% (Доходы - Расходы)</option>
+                                <option ${state.formData.taxSystem === 'ОСНО (с НДС)' ? 'selected' : ''}>ОСНО (с НДС)</option>
+                                <option ${state.formData.taxSystem === 'Патент (ПСН)' ? 'selected' : ''}>Патент (ПСН)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="p-5 rounded-xl space-y-5 bg-brand-white border border-brand-lilac/40">
+                        <h3 class="font-semibold text-sm uppercase tracking-wider text-brand-purpleBlue m-0">Детализация операций</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                            <div>
+                                <label class="flex justify-between text-sm font-medium mb-1 text-brand-graphite">
+                                    <span>Сотрудников в штате:</span>
+                                    <span id="val-employees" class="font-bold text-brand-purpleBlue">${state.formData.employees}</span>
+                                </label>
+                                <input type="range" min="0" max="100" step="1" value="${state.formData.employees}" oninput="updateRange('employees', this.value)" class="w-full">
+                            </div>
+                            <div>
+                                <label class="flex justify-between text-sm font-medium mb-1 text-brand-graphite">
+                                    <span>Кассовых аппаратов:</span>
+                                    <span id="val-cashRegisters" class="font-bold text-brand-purpleBlue">${state.formData.cashRegisters}</span>
+                                </label>
+                                <input type="range" min="0" max="20" step="1" value="${state.formData.cashRegisters}" oninput="updateRange('cashRegisters', this.value)" class="w-full">
+                            </div>
+                            <div>
+                                <label class="flex justify-between text-sm font-medium mb-1 text-brand-graphite">
+                                    <span>Расчетных счетов:</span>
+                                    <span id="val-bankAccounts" class="font-bold text-brand-purpleBlue">${state.formData.bankAccounts}</span>
+                                </label>
+                                <input type="range" min="1" max="10" step="1" value="${state.formData.bankAccounts}" oninput="updateRange('bankAccounts', this.value)" class="w-full">
+                            </div>
+                            <div>
+                                <label class="flex justify-between text-sm font-medium mb-1 text-brand-graphite">
+                                    <span>Док-ов от поставщиков:</span>
+                                    <span id="val-incomingDocs" class="font-bold text-brand-purpleBlue">${state.formData.incomingDocs} шт/мес</span>
+                                </label>
+                                <input type="range" min="0" max="500" step="1" value="${state.formData.incomingDocs}" oninput="updateRange('incomingDocs', this.value)" class="w-full">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="flex justify-between text-sm font-medium mb-1 text-brand-graphite">
+                                    <span>Документов покупателям/заказчикам:</span>
+                                    <span id="val-outgoingDocs" class="font-bold text-brand-purpleBlue">${state.formData.outgoingDocs} шт/мес</span>
+                                </label>
+                                <input type="range" min="0" max="1000" step="1" value="${state.formData.outgoingDocs}" oninput="updateRange('outgoingDocs', this.value)" class="w-full">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        function getStep2HTML() {
+            const currentRisk = nicheRisks[state.formData.niche] || nicheRisks['Услуги (прочее)'];
+            return `
+            <div class="space-y-6 animate-fade-in-up text-left">
+                <div class="space-y-2">
+                    <h2 class="text-2xl font-bold tracking-[-0.03em] text-brand-deepBlue m-0" style="text-align: left;">Анализ рисков в нише</h2>
+                    <p class="text-sm tracking-[-0.02em] text-brand-graphite m-0">Системный подход выявляет следующие угрозы для вашего бизнеса:</p>
+                </div>
+                <div class="space-y-4">
+                    <div class="p-5 rounded-xl border relative overflow-hidden bg-brand-white border-brand-crimson/30">
+                        <div class="absolute top-0 right-0 p-4 opacity-5">
+                            <i data-lucide="shield-alert" class="w-24 h-24 text-brand-crimson"></i>
+                        </div>
+                        <div class="flex items-start gap-4 relative z-10">
+                            <div class="p-2 rounded-lg mt-1 bg-brand-crimson/10">
+                                <i data-lucide="file-text" class="w-6 h-6 text-brand-crimson"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-lg tracking-[-0.03em] text-brand-deepBlue m-0">Налоговые проверки</h3>
+                                <p class="text-sm mt-2 tracking-[-0.02em] leading-relaxed text-brand-graphite m-0">
+                                    Один неверный или несвоевременный ответ на требование ФНС влечет за собой риск более глубокой проверки вашего бизнеса. <b>92% бухгалтеров</b> не имеют компетенций для защиты бизнеса перед инспекторами.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-5 rounded-xl border relative overflow-hidden bg-brand-white border-brand-purpleBlue/30">
+                        <div class="absolute top-0 right-0 p-4 opacity-5">
+                            <i data-lucide="trending-down" class="w-24 h-24 text-brand-purpleBlue"></i>
+                        </div>
+                        <div class="flex items-start gap-4 relative z-10">
+                            <div class="p-2 rounded-lg mt-1 bg-brand-lilac">
+                                <i data-lucide="building-2" class="w-6 h-6 text-brand-purpleBlue"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-lg tracking-[-0.03em] text-brand-deepBlue m-0">${currentRisk.title}</h3>
+                                <p class="text-sm mt-2 tracking-[-0.02em] leading-relaxed text-brand-graphite m-0">
+                                    В сфере "${state.formData.niche}" часто кроется угроза: ${currentRisk.desc}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        function getStep3HTML() {
+            const fin = calculateFinancials();
+            return `
+            <div class="space-y-6 animate-fade-in-up text-left">
+                <div class="space-y-2">
+                    <h2 class="text-2xl font-bold tracking-[-0.03em] text-brand-deepBlue m-0" style="text-align: left;">Финансовая модель</h2>
+                    <p class="text-sm tracking-[-0.02em] text-brand-graphite m-0">Сравнение затрат на содержание штата и системный аутсорсинг</p>
+                </div>
+                <div>
+                    <label class="flex justify-between text-sm font-medium mb-2 text-brand-graphite">
+                        <span>Зарплата вашего бухгалтера (на руки):</span>
+                        <span id="val-salary" class="font-bold text-lg text-brand-purpleBlue">${formatCurrency(state.formData.inhouseSalary)}</span>
+                    </label>
+                    <input type="range" min="30000" max="200000" step="5000" value="${state.formData.inhouseSalary}" oninput="updateRange('inhouseSalary', this.value)" class="w-full">
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="p-5 rounded-xl border border-gray-200 bg-brand-white">
+                        <h3 class="text-xs font-bold mb-4 uppercase tracking-wider text-brand-graphite m-0">Штатный сотрудник</h3>
+                        <div class="space-y-3 text-sm tracking-[-0.02em]">
+                            <div class="flex justify-between"><span class="text-brand-graphite">Оклад:</span><span id="ui-inhouse-salary" class="font-medium text-brand-deepBlue">${formatCurrency(state.formData.inhouseSalary)}</span></div>
+                            <div class="flex justify-between"><span class="text-brand-graphite">Налоги и взносы:</span><span id="ui-inhouse-taxes" class="font-medium text-brand-deepBlue">${formatCurrency(fin.taxesAndContributions)}</span></div>
+                            <div class="flex justify-between"><span class="text-brand-graphite">ПО и место:</span><span id="ui-inhouse-workplace" class="font-medium text-brand-deepBlue">${formatCurrency(fin.workplaceCost)}</span></div>
+                            <div class="pt-3 mt-3 border-t border-gray-100 flex justify-between font-bold text-lg text-brand-deepBlue"><span>Итого:</span><span id="ui-inhouse-total">${formatCurrency(fin.totalInhouseCost)}</span></div>
+                        </div>
+                    </div>
+                    <div class="p-5 rounded-xl text-white shadow-lg relative overflow-hidden bg-brand-purpleBlue">
+                        <h3 class="text-xs font-bold mb-4 uppercase tracking-wider text-white/80 m-0">Центр Финалогика</h3>
+                        <div class="space-y-3 text-sm tracking-[-0.02em] relative z-10">
+                            <div class="flex justify-between"><span class="text-white/90">Аутсорсинг:</span><span id="ui-outsource-base" class="font-medium">${formatCurrency(fin.outsourceCost)}</span></div>
+                            <div class="flex justify-between"><span class="text-white/90">Налоги с ФОТ:</span><span class="font-medium">0 ₽</span></div>
+                            <div class="flex justify-between"><span class="text-white/90">ПО и место:</span><span class="font-medium">0 ₽</span></div>
+                            <div class="pt-3 mt-3 border-t border-white/20 flex justify-between font-bold text-lg"><span>Итого:</span><span id="ui-outsource-total">${formatCurrency(fin.outsourceCost)}</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="ui-savings-container" class="p-4 rounded-xl text-center bg-brand-sand" style="display: ${fin.yearlySavings > 0 ? 'block' : 'none'}">
+                    <p class="font-medium tracking-[-0.02em] text-brand-deepBlue m-0">Спокойствие собственника и экономия за год: <span class="font-bold text-xl block sm:inline mt-1 sm:mt-0 sm:ml-2 text-brand-crimson">${formatCurrency(fin.yearlySavings)}</span></p>
+                </div>
+            </div>`;
+        }
+
+        function getStep4HTML() {
+            return `
+            <div class="space-y-6 animate-fade-in-up text-left">
+                <div class="space-y-2">
+                    <h2 class="text-2xl font-bold tracking-[-0.03em] text-brand-deepBlue m-0" style="text-align: left;">Безопасный переход</h2>
+                    <p class="text-sm tracking-[-0.02em] text-brand-graphite m-0">Долгосрочные отношения строятся на прозрачности и системном подходе</p>
+                </div>
+                <div class="relative border-l-2 ml-4 space-y-8 pb-4 border-brand-lilac">
+                    <div class="relative pl-6">
+                        <div class="absolute w-4 h-4 rounded-full -left-[9px] top-1 ring-4 ring-white bg-brand-purpleBlue"></div>
+                        <h3 class="font-bold text-sm uppercase tracking-wide text-brand-deepBlue m-0">1. Интеллектуальный аудит</h3>
+                        <p class="text-sm mt-1 tracking-[-0.02em] text-brand-graphite m-0">Проверяем текущую базу на ошибки без остановки вашей работы.</p>
+                    </div>
+                    <div class="relative pl-6">
+                        <div class="absolute w-4 h-4 rounded-full -left-[9px] top-1 ring-4 ring-white bg-brand-purpleBlue"></div>
+                        <h3 class="font-bold text-sm uppercase tracking-wide text-brand-deepBlue m-0">2. Быстрый сервис передачи</h3>
+                        <p class="text-sm mt-1 tracking-[-0.02em] text-brand-graphite m-0">Сами корректно забираем дела у прошлого бухгалтера.</p>
+                    </div>
+                    <div class="relative pl-6">
+                        <div class="absolute w-4 h-4 rounded-full -left-[9px] top-1 ring-4 ring-white bg-brand-crimson"></div>
+                        <h3 class="font-bold text-sm uppercase tracking-wide text-brand-deepBlue m-0">3. Юридическая защита</h3>
+                        <p class="text-sm mt-1 tracking-[-0.02em] text-brand-graphite m-0">Подписываем договор, по которому Финалогика несет <b>100% финансовую ответственность</b> за ошибки и штрафы.</p>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        function getStep5HTML() {
+            if (state.isSubmitted) {
+                return `
+                <div class="text-center space-y-4 py-12 animate-zoom-in">
+                    <div class="inline-flex items-center justify-center p-4 rounded-full mb-2 bg-brand-lilac">
+                        <i data-lucide="check-circle-2" class="w-16 h-16 text-brand-purpleBlue"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold tracking-[-0.03em] text-brand-deepBlue m-0">Данные приняты</h2>
+                    <p class="text-sm max-w-xs mx-auto tracking-[-0.02em] text-brand-graphite m-0">Наш эксперт свяжется с вами в течение 15 минут.</p>
+                </div>`;
+            }
+            return `
+            <div class="space-y-6 animate-fade-in-up text-left">
+                <div class="space-y-2">
+                    <h2 class="text-2xl font-bold tracking-[-0.03em] text-brand-deepBlue m-0" style="text-align: left;">Бесплатный экспресс-аудит</h2>
+                    <p class="text-sm tracking-[-0.02em] text-brand-graphite m-0">Оставьте заявку, чтобы выявить скрытые налоговые риски. Осталось <b>2</b> места на этой неделе.</p>
+                </div>
+                <form onsubmit="handleSubmitCalc(event)" class="space-y-4 pt-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1 text-brand-graphite">Ваше имя</label>
+                        <input required type="text" placeholder="Константин" value="${state.formData.name}" onchange="updateInput('name', this.value)" class="w-full p-4 border border-gray-200 rounded-xl outline-none transition-colors focus:border-transparent focus:ring-2 focus:ring-brand-purpleBlue">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1 text-brand-graphite">Телефон</label>
+                        <input required type="tel" placeholder="+7 (999) 000-00-00" value="${state.formData.phone}" onchange="updateInput('phone', this.value)" class="w-full p-4 border border-gray-200 rounded-xl outline-none transition-colors focus:border-transparent focus:ring-2 focus:ring-brand-purpleBlue">
+                    </div>
+                    <button type="submit" class="w-full text-white font-medium py-4 px-6 rounded-xl transition-all shadow-md flex items-center justify-center gap-2 mt-6 bg-brand-purpleBlue hover:opacity-90 outline-none border-0" style="cursor: pointer;">
+                        Оставить заявку
+                        <i data-lucide="send" class="w-5 h-5"></i>
+                    </button>
+                </form>
+            </div>`;
+        }
+
+        function renderStep() {
+            const container = document.getElementById('step-content');
+            if (!container) return;
+            
+            if (state.step === 1) container.innerHTML = getStep1HTML();
+            else if (state.step === 2) container.innerHTML = getStep2HTML();
+            else if (state.step === 3) container.innerHTML = getStep3HTML();
+            else if (state.step === 4) container.innerHTML = getStep4HTML();
+            else if (state.step === 5) container.innerHTML = getStep5HTML();
+
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+            updateNavigationUI();
+        }
+
+        function updateNavigationUI() {
+            const navContainer = document.getElementById('navigation');
+            const btnBack = document.getElementById('btn-back');
+            const btnNextText = document.getElementById('btn-next-text');
+            const btnNextIcon = document.getElementById('btn-next-icon');
+            const progressBar = document.getElementById('progress-bar');
+            const progressContainer = document.getElementById('progress-container');
+
+            if (state.isSubmitted) {
+                navContainer.style.display = 'none';
+                progressContainer.style.display = 'none';
+                return;
+            }
+
+            progressContainer.style.display = 'block';
+            progressBar.style.width = `${(state.step / 5) * 100}%`;
+
+            if (state.step === 5) {
+                navContainer.style.display = 'none'; 
+            } else {
+                navContainer.style.display = 'flex';
+                if (state.step > 1) {
+                    btnBack.classList.remove('hidden');
+                } else {
+                    btnBack.classList.add('hidden');
+                }
+                if (state.step === 4) {
+                    btnNextText.innerText = 'Узнать подробности';
+                    btnNextIcon.style.display = 'none';
+                } else {
+                    btnNextText.innerText = 'Далее';
+                    btnNextIcon.style.display = 'block';
+                }
+            }
+        }
+
+        function handleNext() {
+            if (state.step < 5) { state.step++; renderStep(); }
+        }
+
+        function handleBack() {
+            if (state.step > 1) { state.step--; renderStep(); }
+        }
+
+        function handleSubmitCalc(e) {
+            e.preventDefault();
+            state.isSubmitted = true;
+            
+            const fin = calculateFinancials();
+            
+            // Формируем детальное сообщение (мини-карточку) с результатами из калькулятора
+            const tgMessage = `Здравствуйте! Я прошел диагностику на вашем сайте.
+📊 Мои данные:
+- Отрасль: ${state.formData.niche}
+- Система НО: ${state.formData.taxSystem}
+- Сотрудников: ${state.formData.employees} чел.
+- Касс: ${state.formData.cashRegisters} шт.
+- Расчетных счетов: ${state.formData.bankAccounts} шт.
+- Док-ов от поставщиков: ${state.formData.incomingDocs} шт/мес
+- Док-ов покупателям: ${state.formData.outgoingDocs} шт/мес
+- Текущая ЗП моего бухгалтера: ${formatCurrency(state.formData.inhouseSalary)}
+
+💰 Расчет аутсорсинга от Финалогики: ${formatCurrency(fin.outsourceCost)} / мес.
+Потенциальная выгода/экономия в год: ${formatCurrency(fin.yearlySavings)}
+
+Прошу связаться со мной по номеру: ${state.formData.phone} (${state.formData.name})`;
+
+            window.open('https://t.me/nalogimakovskaya?text=' + encodeURIComponent(tgMessage), '_blank');
+            
+            renderStep();
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderStep();
+        });
     </script>
 </body>
 </html>
